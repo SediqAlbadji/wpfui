@@ -112,6 +112,9 @@ public partial class NavigationView
         MenuItemsItemsControl.ItemsSource = MenuItems;
         FooterMenuItemsItemsControl.ItemsSource = FooterMenuItems;
 
+        ((System.Collections.Specialized.INotifyCollectionChanged)MenuItemsItemsControl.Items).CollectionChanged += MenuItemsItemsControl_Items_CollectionChanged;
+        ((System.Collections.Specialized.INotifyCollectionChanged)FooterMenuItemsItemsControl.Items).CollectionChanged += MenuItemsItemsControl_Items_CollectionChanged;
+        
         if (NavigationViewContentPresenter is not null)
         {
             NavigationViewContentPresenter.Navigated -= OnNavigationViewContentPresenterNavigated;
@@ -148,6 +151,15 @@ public partial class NavigationView
 
             ToggleButton.Click -= OnToggleButtonClick;
             ToggleButton.Click += OnToggleButtonClick;
+        }
+    }
+
+        private void MenuItemsItemsControl_Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if(e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null && e.NewItems.Count > 0) {
+            UpdateMenuItemsTemplate(e.NewItems);
+            AddItemsToDictionaries(e.NewItems);
+            AddItemsToAutoSuggestBoxItems(e.NewItems);
         }
     }
 
